@@ -14,6 +14,9 @@
       body {
     background: #ffffff url("https://i.imgur.com/VxxGeDd.jpg") no-repeat left top fixed;
     }
+      .largeBody{
+         background: #ffffff url("https://i.imgur.com/iW8WAyj.jpg") no-repeat left top fixed;
+      }
 .slider {
   -webkit-appearance: none;
   width: 400px;
@@ -27,15 +30,132 @@
   top: 720px;
   left: 10px;
 }
-      
-      .slider::-webkit-slider-thumb {
+      #myRange2 {
   -webkit-appearance: none;
-  appearance: none;
-  width: 25px;
-  height: 25px;
-  background: #4CAF50;
-  cursor: pointer;
+  width: 880px;
+  height: 15px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  position: absolute;
+  top: 700px;
+  left: 60px;
 }
+      #green1 {
+        width: 52px;
+        height: 52px;
+        position: absolute;
+        left: 990px;
+        top: 315px;
+      }
+            #green2 {
+        width: 52px;
+        height: 52px;
+        position: absolute;
+        left: 990px;
+        top: 386px;
+      }
+            #green3 {
+        width: 52px;
+        height: 52px;
+        position: absolute;
+        left: 990px;
+        top: 459px;
+      }
+            #green4 {
+        width: 52px;
+        height: 52px;
+        position: absolute;
+        left: 990px;
+        top: 530px;
+      }
+      
+      #back {
+        position: absolute;
+        top: 785px;
+        left: 100px;
+        height: 60px;
+        width: 60px;
+        opacity: 0;
+      }
+      #play {
+        position: absolute;
+        top: 785px;
+        left: 180px;
+        height: 60px;
+        width: 60px;
+        opacity: 0;
+      }
+      #forward {
+        position: absolute;
+        top: 785px;
+        left: 260px;
+        height: 60px;
+        width: 60px;
+        opacity: 0;
+      }    
+       #volume {
+        position: absolute;
+        top: 785px;
+        left: 340px;
+        height: 60px;
+        width: 60px;
+         opacity: 0;
+      }
+       #pause {
+        position: absolute;
+        top: 785px;
+        left: 180px;
+        height: 60px;
+        width: 60px;
+      }
+        #flag {
+        position: absolute;
+        top: 785px;
+        left: 20px;
+        height: 60px;
+        width: 60px;
+          opacity: 0;
+      }
+      #mainTimer {
+        position: absolute;
+        top: 80px;
+        left: 167px;
+        font-size: 50px;
+      }
+      
+       #startTimer {
+        position: absolute;
+        top: 590px;
+        left: 67px;
+        font-size: 50px;
+      }
+      #endTimer {
+        position: absolute;
+        top: 590px;
+        left: 247px;
+        font-size: 50px;
+      }
+      #done {
+        position: absolute;
+        top: 94px;
+        left: 300px;
+        height: 50px;
+        width: 96px;
+        opacity: 0;
+      }
+      #startIn {
+        position: absolute;
+        top: 700px;
+        left: 62px;
+      }
+        #endIn {
+        position: absolute;
+        top: 700px;
+        left: 235px;
+      }
       
       
     </style>
@@ -43,28 +163,187 @@
 </head>
 <body>
     <div class="slidecontainer">
-  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+  <input type="range" min="1" max="100" value="50" class="slider" id="myRange" onchange="changeAudio()">
+      <input type="range" min="1" max="100" value="50" class="slider" id="myRange2" onchange="changeAudio()">
 </div>
-  <audio id = "song1" src="" crossorigin="anonymous" controls> </audio>
+  <audio id = "song" src="/static/assets/song1.ogg" crossorigin="anonymous"> </audio>
     <div class="low_buttons">
-    <button>button 1</button>
-    <button>button 2</button>
-    <button>button 3</button>
-    <button>button 4</button>
-    <button>button 5</button>
+    <button onclick= "flagAudio()" id="flag">Flag</button>
+    <button onclick="prevAudio()" id="back">Back</button>
+    <button onclick="playAudio()" id="play">Play</button>
+    <button onclick="nextAudio()" id="forward">For</button>
+      <button onclick="done()" id="done">Done</button>
+    <button id="volume">Vol</button>
+      <input type="image" src="https://i.imgur.com/oBhC0s4.png" onclick="pauseAudio()" id="pause"/>
   </div>
-
+  <div class="timers">
+    <p id="mainTimer">
+      0:00
+    </p>
+    <p id="startTimer">
+      Start
+    </p>
+    <p id="endTimer">
+      End
+    </p>
+  </div>
+  <div class="squares">
+    <img src="https://i.imgur.com/NtY0B8c.jpg" id="green1">
+    <img src="https://i.imgur.com/NtY0B8c.jpg" id="green2">
+    <img src="https://i.imgur.com/NtY0B8c.jpg" id="green3">
+    <img src="https://i.imgur.com/NtY0B8c.jpg" id="green4">
+  </div>
+  
+<input type="text" id="startIn" size="10">
+  
+<input type="text" id="endIn" size="10">
+  
+  
 </body>
 <script>
 
-  var s1 = document.getElementById("song1");
+  
+  
+  
+  
+  
+  
+  
+  var socket = new WebSocket('wss://p3-websockets-t-ding-tomding414330.codeanyapp.com/ws/draw');
+  
+  
+  
+  
+  
+  var url = window.location.href;
+  var sSize = url.charAt(69);
+  var sChoice = url.charAt(70);
+  var identifier = url.charAt(71);
+  var body = document.body;
+  var s1 = document.getElementById("song");
+  var mainSlider = document.getElementById("myRange");
+  var mainTimer = document.getElementById("mainTimer");
+  var startTimer = document.getElementById("startTimer");
+  var endTimer = document.getElementById("endTimer");
+  var temp1 = "0";
+  var temp2 = "00";
+  var temp3;
+  var isStart = 0;
+  
+  
+  
+  
+  
+  
+  $("#startIn").hide();
+  $("#endIn").hide();
+  $("#green1").hide();
+  $("#green2").hide();
+  $("#green3").hide();
+  $("#green4").hide();
+  
+  $("#pause").hide();
+  $("#myRange2").hide();
+  
+  s1.src="/static/assets/song" + sChoice + ".ogg";
+  
   function playAudio() { 
   s1.play(); 
+  mainSlider.max = s1.duration;
+    $("#play").hide();
+    $("#pause").show();
 } 
 
 function pauseAudio() { 
   s1.pause(); 
-} 
+      $("#play").show();
+    $("#pause").hide();
+}
+  
+function nextAudio() {
+  s1.currentTime = s1.currentTime + 0.5;
+}
+
+  function prevAudio() {
+  s1.currentTime = s1.currentTime - 0.5;
+}
+
+  function changeAudio() {
+    s1.currentTime = mainSlider.value;
+  }
+  
+  function flagAudio() {
+    if (sSize == "s") {
+    if (isStart == 2) {
+      startTimer.innerHTML = "Start";
+      endTimer.innerHTML = "End";
+      isStart = 0;
+    }else if (isStart == 0) {
+      startTimer.innerHTML = temp1 + ":" + temp2;
+      isStart = 1;
+    } else {
+      endTimer.innerHTML = temp1 + ":" + temp2;
+      isStart = 2;
+    }
+    } else {
+      if (startIn.value != "") {
+      startTimer.innerHTML = startIn.value;
+      }
+       if (endIn.value != "") {
+      endTimer.innerHTML = endIn.value;
+      }
+      
+    }
+  }
+  
+  function processMath() {
+    temp1 = Math.floor(Math.round(s1.currentTime) / 60);
+    temp2 = Math.round(s1.currentTime) % 60;
+    temp1 = temp1.toString();
+    temp2 = temp2.toString();
+    if (temp2.length == 1) {
+      temp2 = "0" + temp2;
+    }
+    mainTimer.innerHTML = temp1 + ":" + temp2;
+  }
+  
+  function done() {
+    socket.send(identifier.toString());
+  }
+  
+  let updateSlider = setInterval(() => mainSlider.value = s1.currentTime, 500);
+  let updateTimer = setInterval(() => processMath(), 500);
+  
+  if (sSize == "l") {
+    body.className = "largeBody";
+    $(".low_buttons").hide();
+    $(".timers").hide();
+    $("#myRange").hide();
+    $("#myRange2").show();
+  }
+
+      socket.onmessage = function(receivedMessage) {
+      if (sSize == 'l') {
+        rMsg = parseInt(receivedMessage.data);
+        if (rMsg == 1) {
+          $("#green1").show();
+        } else if (rMsg == 2) {
+          $("#green2").show();
+        } else if (rMsg == 3) {
+          $("#green3").show();
+        } else if (rMsg == 4) {
+          $("#green4").show();
+        }
+    }}
+      
+      
+  if (sSize == "v") {
+    $("#myRange").hide();
+    $("#startIn").show();
+    $("#endIn").show();
+    
+  }
+  
   
   
     // setting up the canvas and one paper tool
