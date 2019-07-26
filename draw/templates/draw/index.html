@@ -11,95 +11,116 @@
     <script type="text/javascript" src="{% static 'draw/vendor/paper/paper-full.min.js' %}"></script>
 
     <style type="text/css">
+      body {
+    background: #ffffff url("https://i.imgur.com/VxxGeDd.jpg") no-repeat left top fixed;
+    }
+.slider {
+  -webkit-appearance: none;
+  width: 400px;
+  height: 15px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  position: absolute;
+  top: 720px;
+  left: 10px;
+}
+      
+      .slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+      
+      
     </style>
 
 </head>
 <body>
-    <!-- You may change the dimensions of this canvas -->
-    <canvas id="myCanvas" width="750px" height="750px"></canvas>
+    <div class="slidecontainer">
+  <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+</div>
+  <audio id = "song1" src="" crossorigin="anonymous" controls> </audio>
+    <div class="low_buttons">
+    <button>button 1</button>
+    <button>button 2</button>
+    <button>button 3</button>
+    <button>button 4</button>
+    <button>button 5</button>
+  </div>
 
 </body>
 <script>
 
+  var s1 = document.getElementById("song1");
+  function playAudio() { 
+  s1.play(); 
+} 
+
+function pauseAudio() { 
+  s1.pause(); 
+} 
+  
+  
     // setting up the canvas and one paper tool
-    var canvas = document.getElementById('myCanvas');
-    paper.setup(canvas);
-    var tool = new paper.Tool();
+  
+  
+//     var canvas = document.getElementById('myCanvas');
+//     paper.setup(canvas);
+//     var tool = new paper.Tool();
 
-    var url = window.location.href;
+//     var url = window.location.href;
 
-    var socket = new WebSocket('wss://p3-websockets-t-ding-tomding414330.codeanyapp.com/ws/draw');
+//     var socket = new WebSocket('wss://p3-websockets-t-ding-tomding414330.codeanyapp.com/ws/draw');
   
-var color_sel = ['magenta', 'blue', 'red', 'yellow', 'aqua', 'brown', 'pink', 'purple', 'green', 'orange'];
-var identifier = Math.floor(Math.random() * 10);
-  console.log(identifier);
-console.log(url.charAt(69));
+// var color_sel = ['magenta', 'blue', 'red', 'yellow', 'aqua', 'brown', 'pink', 'purple', 'green', 'orange'];
+// var identifier = Math.floor(Math.random() * 10);
+//   console.log(identifier);
+// console.log(url.charAt(69));
   
-var sSize = url.charAt(69);
-var past = identifier;
+// var sSize = url.charAt(69);
+// var past = identifier;
   
-tool.minDistance = 10;
+// tool.minDistance = 10;
 
-var mpath;
-	mpath = new paper.Path();
-	mpath.strokeColor = color_sel[identifier];
-  
-  
-  
-var rMsg;
-  
-    socket.onmessage = function(receivedMessage) {
-      if (sSize == 'l') {
-      rMsg = receivedMessage.data.split(',');
-      if (past != parseInt(rMsg[2])) {
-        mpath = new paper.Path();
-      }
-      past = parseInt(rMsg[2])
-      mpath.strokeColor = color_sel[past];
-      mpath.add(new paper.Point(parseInt(rMsg[0], 10), parseInt(rMsg[1], 10)));
-    }}
-
-
-window.addEventListener('devicemotion', (event) => {
-  if (Math.abs(event.rotationRate.gamma) > 30) {
-    mpath.strokeColor = 'black';
-  }
-  if (Math.abs(event.acceleration.x) + Math.abs(event.acceleration.y) + Math.abs(event.acceleration.z) > 5) {
-    mpath.remove();
-    mpath = new paper.Path();
-    mpath.strokeColor = color_sel[past];
-  }
-})
-
-
-  
-  
-var sMsg;
-  
-tool.onMouseMove = function(event) {
-  mpath.add(event.point);
-  sMsg = event.point.x.toString() + "," + event.point.y.toString() + "," + identifier.toString();
-  socket.send(sMsg);
-}
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-//   tool.onMouseDown = function(event) {
+// var mpath;
 // 	mpath = new paper.Path();
-// 	mpath.strokeColor = 'black';
-// 	mpath.add(event.point);
+// 	mpath.strokeColor = color_sel[identifier];
+  
+  
+  
+// var rMsg;
+  
+//     socket.onmessage = function(receivedMessage) {
+//       if (sSize == 'l') {
+//       rMsg = receivedMessage.data.split(',');
+//       if (past != parseInt(rMsg[2])) {
+//         mpath = new paper.Path();
+//       }
+//       past = parseInt(rMsg[2])
+//       mpath.strokeColor = color_sel[past];
+//       mpath.add(new paper.Point(parseInt(rMsg[0], 10), parseInt(rMsg[1], 10)));
+//     }}
+  
+// var sMsg;
+  
+// tool.onMouseMove = function(event) {
+//   mpath.add(event.point);
+//   sMsg = event.point.x.toString() + "," + event.point.y.toString() + "," + identifier.toString();
+//   socket.send(sMsg);
 // }
-
-// tool.onMouseDrag = function(event) {
-// 	mpath.add(event.point);
-//   socket.send(event.point);
-// }
+  
+  
+  
+  
+  
+  
+  
+ 
 </script>
 </html>
